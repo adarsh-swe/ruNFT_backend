@@ -5,20 +5,26 @@ const { body, validationResult } = require("express-validator");
 const Token = require("../../models/Token");
 const User = require("../../models/User");
 
-// @route   GET api/users
+// @route   GET api/token
 // @desc    Test route
 // @access  Public
 router.get("/:index", async (req, res) => {
   const index = req.params.index;
 
-  let token = await Token.findOne({ index: index });
-  if (!token) {
-    return res.status(400).json({ errors: [{ msg: "token does not exist" }] });
+  try {
+    let token = await Token.findOne({ index: index });
+    if (token) {
+      return res.send(token);
+    }
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).send("Server error");
   }
-
-  return res.send(token);
 });
 
+// @route   POST api/token
+// @desc    Add token metadata to MongoDB
+// @access  Public
 router.post(
   "/",
   [
@@ -48,17 +54,11 @@ router.post(
       }
 
       let background_color = "c2c2c2";
-      if (attributes[0].distance > 5000) {
+      if (attributes[0].value > 5000) {
         background_color = "f7693e";
-      } else if (
-        attributes[0].distance >= 2500 &&
-        attributes[0].distance < 5000
-      ) {
+      } else if (attributes[0].value >= 2500 && attributes[0].value < 5000) {
         background_color = "6078f0";
-      } else if (
-        attributes[0].distance >= 1000 &&
-        attributes[0].distance < 2500
-      ) {
+      } else if (attributes[0].value >= 1000 && attributes[0].value < 2500) {
         background_color = "94f7ab";
       }
       token = new Token({
