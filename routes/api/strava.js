@@ -20,6 +20,7 @@ router.post(
 
     try {
       const runs = await stravaAPI(accessToken, "/activities?per_page=30");
+      const user = await stravaAPI(accessToken, "");
       const clean = runs.map((x) => {
         return {
           image:
@@ -41,6 +42,14 @@ router.post(
               trait_type: "date",
               value: x.start_date,
             },
+            {
+              trait_type: "firstname",
+              value: user.firstname,
+            },
+            {
+              trait_type: "lastname",
+              value: user.lastname,
+            },
           ],
         };
       });
@@ -60,6 +69,18 @@ router.post(
     }
   }
 );
+
+router.post("/test", async (req, res) => {
+  const { accessToken } = req.body;
+  try {
+    const user = await stravaAPI(accessToken, "");
+    console.log(user);
+    return res.send(user);
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).send("Server error");
+  }
+});
 
 function stravaAPI(token, path, body = {}, method = "get") {
   return rp("https://www.strava.com/api/v3/athlete" + path, {
