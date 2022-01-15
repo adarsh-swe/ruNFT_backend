@@ -1,13 +1,12 @@
 require("dotenv").config();
 
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+const { has } = require("config");
 
 const API_URL = process.env.API_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const PUBLIC_KEY = process.env.PUBLIC_KEY;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
-
-console.log(API_URL);
 
 const ABI = require("./abi.json");
 
@@ -16,7 +15,6 @@ function minter(to = "0xD7697F9EabfEECBe601B49aAbD9492b2650958E3", amount = 1) {
     const web3 = createAlchemyWeb3(API_URL);
 
     const nftContract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
-    const totalSupply = await nftContract.methods.totalSupply().call();
     const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, "latest");
 
     const transaction = {
@@ -39,17 +37,21 @@ function minter(to = "0xD7697F9EabfEECBe601B49aAbD9492b2650958E3", amount = 1) {
       signedTx.rawTransaction,
       function (error, hash) {
         if (!error) {
-          console.log(
-            "🎉 The hash of your transaction is: ",
-            hash,
-            "\n Check Alchemy's Mempool to view the status of your transaction!"
-          );
-          resolve();
+          const retry = () => {
+            web3.eth.getTransactionReceipt(hash, async (err, txR) => {
+              if (txR) {
+                const totalSupply = await nftContract.methods
+                  .totalSupply()
+                  .call();
+                resolve(totalSupply);
+              } else {
+                setTimeout(retry, 4000);
+              }
+            });
+          };
+
+          retry();
         } else {
-          console.log(
-            "❗Something went wrong while submitting your transaction:",
-            error
-          );
           reject();
         }
       }
@@ -59,10 +61,13 @@ function minter(to = "0xD7697F9EabfEECBe601B49aAbD9492b2650958E3", amount = 1) {
 
 function mintNFT(wallet, metadata) {
   minter()
-    .then(() => {
+    .then((tokenNumber) => {
+      console.log(tokenNumber);
       //push metadata to mongodb
     })
     .catch(() => {});
 }
 
 module.exports = { mintNFT };
+
+mintNFT();
