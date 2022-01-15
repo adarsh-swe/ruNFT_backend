@@ -18,8 +18,11 @@
   },
   "homepage": "https://github.com/adarsh-swe/ruNFT_backend#readme",
   "dependencies": {
+    "@alch/alchemy-web3": "^1.1.9",
     "bcrypt": "^5.0.1",
+    "bottleneck": "^2.19.5",
     "config": "^3.3.7",
+    "dotenv": "^12.0.3",
     "express": "^4.17.2",
     "express-validator": "^6.14.0",
     "jsonwebtoken": "^8.5.1",
