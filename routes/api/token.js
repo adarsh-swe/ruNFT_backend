@@ -5,6 +5,8 @@ const { body, validationResult } = require("express-validator");
 const Token = require("../../models/Token");
 const User = require("../../models/User");
 
+const { mintNFT } = require("../../contractUtils/transact");
+
 // @route   GET api/token
 // @desc    Test route
 // @access  Public
@@ -26,9 +28,8 @@ router.get("/:index", async (req, res) => {
 // @desc    Add token metadata to MongoDB
 // @access  Public
 router.post(
-  "/",
+  "/mint/:address",
   [
-    body("index", "").not().isEmpty(),
     body("image", "").not().isEmpty(),
     body("external_url", "").not().isEmpty(),
     body("description", "").not().isEmpty(),
@@ -42,8 +43,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { index, image, external_url, description, name, attributes } =
-      req.body;
+    const { image, external_url, description, name, attributes } = req.body;
     try {
       let token = await Token.findOne({ image });
 
@@ -51,6 +51,14 @@ router.post(
         return res
           .status(400)
           .json({ errors: [{ msg: "token already exists" }] });
+      }
+
+      const address = req.params.address;
+      const index = await mintNFT(address);
+      if (!index) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "unable able to mint" }] });
       }
 
       let background_color = "c2c2c2";
