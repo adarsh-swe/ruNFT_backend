@@ -31,6 +31,7 @@ router.post(
   ],
   async (req, res) => {
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
@@ -41,7 +42,9 @@ router.post(
       let token = await Token.findOne({ image });
 
       if (token) {
-        res.status(400).json({ errors: [{ msg: "token already exists" }] });
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "token already exists" }] });
       }
 
       let background_color = "c2c2c2";
@@ -69,10 +72,10 @@ router.post(
       });
 
       await token.save();
-      res.send("Token Added");
+      return res.send("Token Added");
     } catch (err) {
       console.log(err.message);
-      res.status(500).send("Server error");
+      return res.status(500).send("Server error");
     }
   }
 );

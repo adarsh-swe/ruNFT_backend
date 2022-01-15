@@ -21,10 +21,8 @@ const TokenSchema = new mongoose.Schema({
   },
   attributes: [
     {
-      duration: String,
-    },
-    {
-      distance: Number,
+      trait_type: String,
+      value: Object,
     },
   ],
   background_color: {
