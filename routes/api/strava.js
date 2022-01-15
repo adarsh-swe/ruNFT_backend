@@ -23,6 +23,7 @@ router.post(
       const user = await stravaAPI(accessToken, "");
       const clean = runs.map((x) => {
         return {
+          id: x.id,
           image:
             "https://www.mapquestapi.com/staticmap/v5/map?key=5CwVm7auP5lj4DAbzS2AVhyAFtM3vevI&shape=cmp%7Cenc:" +
             x.map.summary_polyline,
