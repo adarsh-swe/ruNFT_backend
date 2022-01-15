@@ -5,11 +5,13 @@ const app = express();
 
 connectDB();
 
+//init middleware
+app.use(express.json());
+
 app.get("/", (req, res) => res.send("API running"));
 
 //routes
-app.use("/api/users", require("./routes/api/users"));
-app.use("/api/auth", require("./routes/api/auth"));
+app.use("/api/token", require("./routes/api/token"));
 
 const PORT = process.env.PORT || 5000;
 
