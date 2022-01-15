@@ -8,10 +8,21 @@ const User = require("../../models/User");
 // @route   GET api/users
 // @desc    Test route
 // @access  Public
-router.get("/", (req, res) => res.send("Token route"));
+router.get("/:index", async (req, res) => {
+  const index = req.params.index;
+
+  let token = await Token.findOne({ index: index });
+  if (!token) {
+    return res.status(400).json({ errors: [{ msg: "token does not exist" }] });
+  }
+
+  return res.send(token);
+});
+
 router.post(
   "/",
   [
+    body("index", "").not().isEmpty(),
     body("image", "").not().isEmpty(),
     body("external_url", "").not().isEmpty(),
     body("description", "").not().isEmpty(),
@@ -24,7 +35,8 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { image, external_url, description, name, attributes } = req.body;
+    const { index, image, external_url, description, name, attributes } =
+      req.body;
     try {
       let token = await Token.findOne({ image });
 
@@ -47,6 +59,7 @@ router.post(
         background_color = "94f7ab";
       }
       token = new Token({
+        index,
         image,
         external_url,
         description,

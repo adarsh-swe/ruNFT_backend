@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const TokenSchema = new mongoose.Schema({
+  index: { type: Number, required: true },
   image: {
     type: String,
     required: true,
