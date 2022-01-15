@@ -1,0 +1,33 @@
+{
+  "name": "runft_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "server": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adarsh-swe/ruNFT_backend.git"
+  },
+  "author": "Adarsh Het Kishor Mit",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adarsh-swe/ruNFT_backend/issues"
+  },
+  "homepage": "https://github.com/adarsh-swe/ruNFT_backend#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "config": "^3.3.7",
+    "express": "^4.17.2",
+    "express-validator": "^6.14.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.6",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0",
+    "nodemon": "^2.0.15"
+  }
+}
