@@ -6,6 +6,10 @@ const TokenSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  imageHosted: {
+    type: String,
+    required: true,
+  },
   external_url: {
     type: String,
     required: true,

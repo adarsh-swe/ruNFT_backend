@@ -18,7 +18,7 @@ router.get("/:index", async (req, res) => {
     let token = await Token.findOne({ index: index });
     if (token) {
       return res.send({
-        image: token.image,
+        image: token.imageHosted,
         name: token.name,
         attributes: token.attributes.map((x) => {
           return {
@@ -67,7 +67,7 @@ router.post(
       }
 
       const image =
-        "https://www.mapquestapi.com/staticmap/v5/map?key=5CwVm7auP5lj4DAbzS2AVhyAFtM3vevI&shape=cmp%7Cenc:" +
+        "https://www.mapquestapi.com/staticmap/v5/map?key=5CwVm7auP5lj4DAbzS2AVhyAFtM3vevI&size=350,350&format=png&type=dark&shape=cmp%7Cenc:" +
         activity.map.summary_polyline;
       const external_url = "idk";
       const description = activity.name;
@@ -118,9 +118,13 @@ router.post(
       } else if (attributes[0].value >= 1000 && attributes[0].value < 2500) {
         background_color = "94f7ab";
       }
+
+      const imageHosted = await uploadImage(image);
+
       token = new Token({
         index,
         image,
+        imageHosted,
         external_url,
         description,
         name,
@@ -156,6 +160,23 @@ function stravaAPI(token, path, body = {}, method = "get") {
     },
     json: body,
     method: method,
+  });
+}
+
+function uploadImage(url) {
+  return rp(
+    "https://api.imgbb.com/1/upload?key=d2005a3a35e65a5bb360c012ed12e308",
+    {
+      formData: {
+        image: url,
+      },
+      method: "POST",
+    }
+  ).then((res) => {
+    const json = JSON.parse(res);
+    const data = json.data;
+    const url = data.url;
+    return url;
   });
 }
 
