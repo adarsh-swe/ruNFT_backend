@@ -21,7 +21,12 @@ router.get("/:index", async (req, res) => {
         external_url: token.external_url,
         image: token.image,
         name: token.name,
-        attributes: token.attributes,
+        attributes: token.attributes.map((x) => {
+          return {
+            trait_type: x.trait_type,
+            value: x.value,
+          };
+        }),
       });
     }
   } catch (err) {
