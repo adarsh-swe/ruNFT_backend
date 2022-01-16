@@ -28,10 +28,12 @@ router.get("/:index", async (req, res) => {
           };
         }),
       });
+    } else {
+      return res.send({});
     }
   } catch (err) {
     console.log(err.message);
-    return res.status(500).send("Server error");
+    return res.status(500).send("server error");
   }
 });
 
