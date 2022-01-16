@@ -1,8 +1,10 @@
 # ruNFT_backend
 
 Welcome to the backend repo for ruNFT! 
+
 Read about the app in our DevPost: 
-Check out our frontend repo: 
+
+Check out our frontend repo: https://github.com/kishorpandya2210/run_app
 
 Getting Started: 
 1. ensure you have node, npm, and git installed on your computer
