@@ -16,7 +16,13 @@ router.get("/:index", async (req, res) => {
   try {
     let token = await Token.findOne({ index: index });
     if (token) {
-      return res.send(token);
+      return res.send({
+        description: token.description,
+        external_url: token.external_url,
+        image: token.image,
+        name: token.name,
+        attributes: token.attributes,
+      });
     }
   } catch (err) {
     console.log(err.message);
