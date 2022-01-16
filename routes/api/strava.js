@@ -94,6 +94,20 @@ router.post("/useractivity", async (req, res) => {
   }
 });
 
+
+router.post("/useractivitylist", async (req, res) => {
+  const { accessToken } = req.body;
+  try {
+    const runs = await stravaAPI(accessToken, "/activities?per_page=30");
+    let response = runs;
+
+    return res.send(response);
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).send("Server error");
+  }
+});
+
 function stravaAPI(token, path, body = {}, method = "get") {
   return rp("https://www.strava.com/api/v3/athlete" + path, {
     headers: {
