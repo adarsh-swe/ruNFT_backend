@@ -58,53 +58,48 @@ router.post(
       const runs = await stravaAPI(accessToken, "/activities?per_page=30");
 
       const activity = runs.filter((x) => x.id == id)[0];
-      console.log(activity);
+
       if (!activity) {
         return res
           .status(400)
           .json({ errors: [{ msg: "None of your activiites have this id" }] });
       }
 
-      // const tokenObj = {
-      //   image:
-      //     "https://www.mapquestapi.com/staticmap/v5/map?key=5CwVm7auP5lj4DAbzS2AVhyAFtM3vevI&shape=cmp%7Cenc:" +
-      //     x.map.summary_polyline,
-      //   external_url: "idk",
-      //   description: x.name,
-      //   name: x.distance + "m run",
-      //   attributes: [
-      //     {
-      //       trait_type: "distance",
-      //       value: x.distance,
-      //     },
-      //     {
-      //       trait_type: "duration",
-      //       value: x.elapsed_time,
-      //     },
-      //     {
-      //       trait_type: "date",
-      //       value: x.start_date,
-      //     },
-      //   ],
-      // };
+      const image =
+        "https://www.mapquestapi.com/staticmap/v5/map?key=5CwVm7auP5lj4DAbzS2AVhyAFtM3vevI&shape=cmp%7Cenc:" +
+        activity.map.summary_polyline;
+      const external_url = "idk";
+      const description = activity.name;
+      const name = activity.distance + "m run";
+      const attributes = [
+        {
+          trait_type: "distance",
+          value: activity.distance,
+        },
+        {
+          trait_type: "duration",
+          value: activity.elapsed_time,
+        },
+        {
+          trait_type: "date",
+          value: activity.start_date,
+        },
+      ];
 
+      let token = await Token.findOne({ image: image });
 
-
-
-      let token = await Token.find({ image });
       if (token) {
         return res
           .status(400)
           .json({ errors: [{ msg: "token already exists" }] });
       }
 
-      console.log(runs);
-      // const index = await mintNFT(address);
-      // if (!index) {
-      //   return res
-      //     .status(400)
-      //     .json({ errors: [{ msg: "unable able to mint" }] });
-      // }
+      const index = await mintNFT(address);
+      if (!index) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "unable able to mint" }] });
+      }
 
       let background_color = "c2c2c2";
       if (attributes[0].value > 5000) {
