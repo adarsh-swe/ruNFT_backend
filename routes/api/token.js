@@ -55,6 +55,7 @@ router.post(
 
     console.log(address, id);
     try {
+      const user = await stravaAPI(accessToken, "");
       const runs = await stravaAPI(accessToken, "/activities?per_page=30");
 
       const activity = runs.filter((x) => x.id == id)[0];
@@ -83,6 +84,14 @@ router.post(
         {
           trait_type: "date",
           value: activity.start_date,
+        },
+        {
+          trait_type: "firstname",
+          value: user.firstname,
+        },
+        {
+          trait_type: "lastname",
+          value: user.lastname,
         },
       ];
 
