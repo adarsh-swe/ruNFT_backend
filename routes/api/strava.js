@@ -71,12 +71,23 @@ router.post(
   }
 );
 
-router.post("/test", async (req, res) => {
+router.post("/useractivity", async (req, res) => {
   const { accessToken } = req.body;
   try {
     const user = await stravaAPI(accessToken, "");
-    console.log(user);
-    return res.send(user);
+    const runs = await stravaAPI(accessToken, "/activities?per_page=30");
+    let response = {
+      firstname: user.firstname,
+      lastname: user.lastname,
+      weight: user.weight,
+      city: user.city,
+      state: user.state,
+      country: user.country,
+      gender: user.sex,
+      activities: runs,
+    };
+
+    return res.send(response);
   } catch (err) {
     console.log(err.message);
     return res.status(500).send("Server error");
