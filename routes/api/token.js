@@ -18,8 +18,6 @@ router.get("/:index", async (req, res) => {
     let token = await Token.findOne({ index: index });
     if (token) {
       return res.send({
-        description: token.description,
-        external_url: token.external_url,
         image: token.image,
         name: token.name,
         attributes: token.attributes.map((x) => {
@@ -134,6 +132,18 @@ router.post(
     }
   }
 );
+
+router.put("/update/:index", async (req, res) => {
+  try {
+    let token = await Token.findOne({ index: req.params.index });
+    let id = token._id.toString();
+    await Token.findByIdAndUpdate({ _id: id }, req.body);
+    res.send("Updated token");
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send("server error");
+  }
+});
 
 function stravaAPI(token, path, body = {}, method = "get") {
   return rp("https://www.strava.com/api/v3/athlete" + path, {
