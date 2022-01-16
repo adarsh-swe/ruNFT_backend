@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const rp = require("request-promise");
 const { body, validationResult } = require("express-validator");
 
 const Token = require("../../models/Token");
@@ -34,14 +35,8 @@ router.get("/:index", async (req, res) => {
 // @desc    Add token metadata to MongoDB
 // @access  Public
 router.post(
-  "/mint/:address",
-  [
-    body("image", "").not().isEmpty(),
-    body("external_url", "").not().isEmpty(),
-    body("description", "").not().isEmpty(),
-    body("name", "").not().isEmpty(),
-    body("attributes", "").not().isEmpty(),
-  ],
+  "/mint/:address/id",
+  [body("accessToken", "").not().isEmpty()],
   async (req, res) => {
     const errors = validationResult(req);
 
@@ -49,9 +44,11 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { image, external_url, description, name, attributes } = req.body;
+    const address = req.params.address;
+    const id = req.params.id;
+
     try {
-      let token = await Token.findOne({ image });
+      let token = await Token.findOne({ id });
 
       if (token) {
         return res
@@ -59,13 +56,15 @@ router.post(
           .json({ errors: [{ msg: "token already exists" }] });
       }
 
-      const address = req.params.address;
-      const index = await mintNFT(address);
-      if (!index) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "unable able to mint" }] });
-      }
+      const { accessToken } = req.body;
+      const runs = await stravaAPI(accessToken, "/activities?per_page=30");
+
+      // const index = await mintNFT(address);
+      // if (!index) {
+      //   return res
+      //     .status(400)
+      //     .json({ errors: [{ msg: "unable able to mint" }] });
+      // }
 
       let background_color = "c2c2c2";
       if (attributes[0].value > 5000) {
@@ -93,5 +92,15 @@ router.post(
     }
   }
 );
+
+function stravaAPI(token, path, body = {}, method = "get") {
+  return rp("https://www.strava.com/api/v3/athlete" + path, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+    json: body,
+    method: method,
+  });
+}
 
 module.exports = router;
