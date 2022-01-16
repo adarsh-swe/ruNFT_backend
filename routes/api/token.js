@@ -42,7 +42,7 @@ router.get("/:index", async (req, res) => {
 // @desc    Add token metadata to MongoDB
 // @access  Public
 router.post(
-  "/mint/:address/id",
+  "/mint/:address/:id",
   [body("accessToken", "").not().isEmpty()],
   async (req, res) => {
     const errors = validationResult(req);
@@ -53,19 +53,54 @@ router.post(
 
     const address = req.params.address;
     const id = req.params.id;
+    const { accessToken } = req.body;
 
+    console.log(address, id);
     try {
-      let token = await Token.findOne({ id });
+      const runs = await stravaAPI(accessToken, "/activities?per_page=30");
 
+      const activity = runs.filter((x) => x.id == id)[0];
+      console.log(activity);
+      if (!activity) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "None of your activiites have this id" }] });
+      }
+
+      // const tokenObj = {
+      //   image:
+      //     "https://www.mapquestapi.com/staticmap/v5/map?key=5CwVm7auP5lj4DAbzS2AVhyAFtM3vevI&shape=cmp%7Cenc:" +
+      //     x.map.summary_polyline,
+      //   external_url: "idk",
+      //   description: x.name,
+      //   name: x.distance + "m run",
+      //   attributes: [
+      //     {
+      //       trait_type: "distance",
+      //       value: x.distance,
+      //     },
+      //     {
+      //       trait_type: "duration",
+      //       value: x.elapsed_time,
+      //     },
+      //     {
+      //       trait_type: "date",
+      //       value: x.start_date,
+      //     },
+      //   ],
+      // };
+
+
+
+
+      let token = await Token.find({ image });
       if (token) {
         return res
           .status(400)
           .json({ errors: [{ msg: "token already exists" }] });
       }
 
-      const { accessToken } = req.body;
-      const runs = await stravaAPI(accessToken, "/activities?per_page=30");
-
+      console.log(runs);
       // const index = await mintNFT(address);
       // if (!index) {
       //   return res
