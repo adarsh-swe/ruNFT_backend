@@ -2,7 +2,7 @@
 
 Welcome to the backend repo for ruNFT! 
 
-Read about the app in our DevPost: 
+Read about the app in our DevPost: https://devpost.com/software/runft?ref_content=user-portfolio&ref_feature=in_progress
 
 Check out our frontend repo: https://github.com/kishorpandya2210/run_app
 
